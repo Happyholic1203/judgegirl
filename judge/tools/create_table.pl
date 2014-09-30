@@ -14,6 +14,7 @@ $dbh = connect_judgeDb();
 @logs_table = ("log");
 @votes_table = ("votes");
 @voterec_table = ("voterec");
+@news_table = ("news");
 
 #
 #
@@ -31,16 +32,17 @@ for(@ARGV){
         when('-p'){ create_problems(@problems_table) if($force or confirm('problems',@problems_table)) ; }
         when('-l'){ create_logs(@logs_table)         if($force or confirm('logs',@logs_table)); }
         when('-v'){ create_volumes(@volume_table)    if($force or confirm('volumes',@volume_table)); }
+        when('-n'){ create_news(@news_table)    if($force or confirm('news',@news_table)); }
         when(/^-t/){ $title=$_ ; $title =~ s/-t// ; }
         when('-f'){ ; }
         when('-vote'){
-		if($force or confirm('vote',(@votes_table, @voterec_table))){
-			create_votes(@votes_table);
-			create_voterec(@voterec_table);
-		}
-	}
+        if($force or confirm('vote',(@votes_table, @voterec_table))){
+            create_votes(@votes_table);
+            create_voterec(@voterec_table);
+        }
+    }
         default{
-	    my ($type, $name) = split(":", $_);
+        my ($type, $name) = split(":", $_);
             if ($force or confirm("problemset".(($title ne '') && ", titled '$title', of type '$type'" || ""), ($name) )){
                 create_problemset(($name));
                 $dbh->do("insert into volumes ( name, type ) values ( '$name', '$type' );");
@@ -99,7 +101,7 @@ Example
 
 sub create_users {
     foreach (@_){
-	$dbh->do(qq{
+    $dbh->do(qq{
         CREATE TABLE  $_ (
          user CHAR( 16 ) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL ,
           passwd CHAR( 32 ) NULL DEFAULT NULL ,
@@ -107,56 +109,99 @@ sub create_users {
             name BLOB NOT NULL,
               PRIMARY KEY(user)
             )
-		});
+        });
     }
 }
 
 sub create_problems {
     foreach (@_){
-	$dbh->do(qq{
-		CREATE TABLE $_(
-		    volume char(255),
-		    number tinyint(3) unsigned AUTO_INCREMENT,
-		    title varchar(255),
-		    available tinyint(1) DEFAULT 0,
-		    deadline datetime,
-		    file varchar(255) DEFAULT \"source.c\",
-		    url varchar(255),
-		    testpath varchar(255),
-		    usertest varchar(255),
-		    PRIMARY KEY (volume, number)
-		    )
-		});
+    $dbh->do(qq{
+        CREATE TABLE $_(
+            volume char(255),
+            number tinyint(3) unsigned AUTO_INCREMENT PRIMARY KEY,
+            title varchar(255),
+            available tinyint(1) DEFAULT 0,
+            deadline datetime,
+            file varchar(255) DEFAULT \"source.c\",
+            url varchar(255),
+            testpath varchar(255),
+            usertest varchar(255),
+            UNIQUE INDEX `unique_volume_number` (volume, number)
+            )
+        });
     }
 }
 
+# sub create_problems {
+#     foreach (@_){
+#     $dbh->do(qq{
+#         CREATE TABLE $_(
+#             volume char(255),
+#             number tinyint(3) unsigned AUTO_INCREMENT,
+#             title varchar(255),
+#             available tinyint(1) DEFAULT 0,
+#             deadline datetime,
+#             file varchar(255) DEFAULT \"source.c\",
+#             url varchar(255),
+#             testpath varchar(255),
+#             usertest varchar(255),
+#             PRIMARY KEY (volume, number)
+#             )
+#         });
+#     }
+# }
+
+# sub create_problemset {
+#     foreach (@_){
+#     $dbh->do(qq{
+#         CREATE TABLE $_(
+#             user char(16),
+#             program blob,
+#             number tinyint unsigned DEFAULT 0,
+#             time datetime,
+#             trial tinyint unsigned AUTO_INCREMENT,
+#             score double,
+#             exec_time double,
+#             exec_space double,
+#             log text,
+#             exec_md5 char(32),
+#             ip char(39),
+#             valid tinyint(1),
+#             comment text,
+#             result varchar(255),
+#             PRIMARY KEY (user, number, trial)
+#             )
+#         });
+#     }
+# }
+
 sub create_problemset {
     foreach (@_){
-	$dbh->do(qq{
-		CREATE TABLE $_(
-		    user char(16),
-		    program blob,
-		    number tinyint unsigned DEFAULT 0,
-		    time datetime,
-		    trial tinyint unsigned AUTO_INCREMENT,
-		    score double,
+    $dbh->do(qq{
+        CREATE TABLE $_(
+            user char(16),
+            program blob,
+            number tinyint unsigned DEFAULT 0,
+            time datetime,
+            trial tinyint unsigned AUTO_INCREMENT PRIMARY KEY,
+            score double,
             exec_time double,
             exec_space double,
-		    log text,
-		    exec_md5 char(32),
-		    ip char(39),
-		    valid tinyint(1),
-		    comment text,
+            log text,
+            exec_md5 char(32),
+            ip char(39),
+            valid tinyint(1),
+            comment text,
             result varchar(255),
-		    PRIMARY KEY (user, number, trial)
-		    )
-		});
+            UNIQUE INDEX `unique_user_number_trial` (user, number, trial)
+            )
+        });
     }
 }
 
 sub create_volumes {
     foreach (@_){
-	$dbh->do(qq{
+    $dbh->do(qq{
         CREATE TABLE  $_ (
          number TINYINT( 3 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
           type CHAR( 255 ) NOT NULL ,
@@ -182,32 +227,46 @@ sub create_logs {
 
 sub create_votes {
     foreach (@_){
-	$dbh->do(qq{
-		CREATE TABLE $_(
-		    number tinyint(3) unsigned AUTO_INCREMENT,
-		    title varchar(255),
-		    description text,
-		    options text,
-		    available tinyint(1) DEFAULT 0,
-		    deadline datetime,
-		    PRIMARY KEY (number)
-		    )
-		});
+    $dbh->do(qq{
+        CREATE TABLE $_(
+            number tinyint(3) unsigned AUTO_INCREMENT,
+            title varchar(255),
+            description text,
+            options text,
+            available tinyint(1) DEFAULT 0,
+            deadline datetime,
+            PRIMARY KEY (number)
+            )
+        });
     }
 }
 
 sub create_voterec {
     foreach (@_){
-	$dbh->do(qq{
-		CREATE TABLE $_(
-		    user char(16),
-		    number tinyint unsigned DEFAULT 0,
-		    time datetime,
-		    selection text,
-		    comment text,
-		    PRIMARY KEY (user, number)
-		    )
-		});
+    $dbh->do(qq{
+        CREATE TABLE $_(
+            user char(16),
+            number tinyint unsigned DEFAULT 0,
+            time datetime,
+            selection text,
+            comment text,
+            PRIMARY KEY (user, number)
+            )
+        });
     }
 }
 
+sub create_news {
+    foreach (@_){
+    $dbh->do(qq{
+        CREATE TABLE $_(
+            id MEDIUMINT NOT NULL AUTO_INCREMENT,
+            timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            user CHAR( 16 ) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+            title text,
+            content text,
+            PRIMARY KEY (id)
+            )
+        });
+    }
+}
