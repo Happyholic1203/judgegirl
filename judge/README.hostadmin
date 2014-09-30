@@ -5,7 +5,8 @@ sudoer (# EIDTOR=vim visudo)
     User_Alias JUDGE_COURSE = <course name1>, <course name2> ...
     JUDGE_COURSE ALL = (judgegirl) NOPASSWD: ALL
 
-apache2 (/etc/conf.d/apache2)
+# apache2 (/etc/conf.d/apache2)
+apache2 (/etc/init.d/apache2)
 
     APACHE2_OPTS="... -D USERDIR -D PHP5"
 
@@ -28,6 +29,28 @@ Sandbox Account
 
     # groupadd juser 
     # useradd -s /sbin/nologin -U -M judgegirl
+    # (Ubuntu) useradd -s /usr/sbin/nologin -U -M judgegirl
+
+Apache Document Root
+
+    $ vim /etc/apache2/site-enabled/000-default
+    > Change `DocumentRoot /var/www` to `DocumentRoot /path/to/public_html`
+    > Change `<Directory /var/www...>` to `<Directory /path/to/public_html>`
+
+Create tables
+    $ cd ~/judge/tools
+
+    # creates tables: users, log, problems, volumes, news
+    # creates a volume called 'Test', with type CPP in volumes
+    $ ./create_table.pl -u -l -p -v -n '-tTest' CPP:test
+
+Create Account and Login
+    $ cd ~/judge/tools
+    $ chmod +x *.pl
+    $ ./adduser.pl -s # add a super user
+    > admin admin
+    > ^D
+    $ cat info_admin
 
 Add Course
 
