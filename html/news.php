@@ -32,6 +32,9 @@ if(!preg_match('/^\w*$/', $userid))
 if($_SESSION["SU"]) {
     $_title = $_POST["title"];
     $_content = preg_replace('/\n/m', '<br>', $_POST["content"]);
+    $userid = mysql_real_escape_string($userid);
+    $_title = mysql_real_escape_string($_title);
+    $_content = mysql_real_escape_string($_content);
     if($_title && $_content) {
         mysql_query("INSERT INTO news (user, title, content) VALUES ('$userid', '$_title', '$_content');");
     }
