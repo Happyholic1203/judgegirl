@@ -16,6 +16,7 @@
 if($_SESSION["SU"]) {
     echo "<a class=\"menu admin\" href=\"login_log.php\">Login Log</a>\n";
     echo "<a class=\"menu admin\" href=\"recent_submission.php\">Recent Submissions</a>\n";
+    echo "<a class=\"menu admin\" href=\"volume_upload.php\">Volume Upload</a>\n";
 /**    echo "<a class=\"menu admin\" href=\"rank.php\">Rank</a>\n"; **/
 /** echo "<a class=\"menu admin\" href=\"cheat_exaime.php\">Duplication Check</a> $newtag\n"; **/
 }

@@ -21,11 +21,11 @@ $PREFIX=$HOME;
     __JSHRC => "$PREFIX/.bashrc_judge",
     __JPROB => "$PREFIX/problems",
 # Course Information
-   __COURSE => 'Course Name',
-   __INSTRU => 'Instructor Name',
+   __COURSE => '1031_programming',
+   __INSTRU => '林宗男',
    __TMZONE => 'Asia/Taipei',
-   __JSADDR => 'http://example.com/~user/',
-   __CRADDR => 'http://example.com/course-address/',
+   __JSADDR => 'http://192.168.56.96/~user/',
+   __CRADDR => 'http://192.168.56.96/course-address/',
 # Host of MySQL, should be localhost if you installed locally
   __SQLHOST => 'localhost',
 # Leave the following 3 lines unchanged if you want to setup DB later

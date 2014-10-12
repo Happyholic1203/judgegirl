@@ -6,28 +6,37 @@
 #   in this file, and make sure contents here is readable to Perl.
 
 # Course Informations
-$StrCourse = "__COURSE__";
+$StrCourse = "103-1 計算機程式";
 $StrCourseName = $StrCourse." 線上批改系統";
 $StrCourseNameEng = $StrCourse." JudgeGirl system";
 
 # Site Informations
-$TimeZone  = '__TMZONE__';
-$JudgeAddr = '__JSADDR__';
-$CourseAddr= '__CRADDR__';
+$TimeZone  = 'Asia/Taipei';
+$JudgeAddr = 'http://192.168.56.95/';
+$CourseAddr= 'http://192.168.56.95/';
+# $JudgeAddr = 'http://example.com/~user/';
+# $CourseAddr= 'http://example.com/course-address/';
 
 # DB information, these tokens should not appear twice
 # or Bash script would fail
-$MySQLhost = '__SQLHOST__';
-$MySQLuser = '__SQLUSER__';
-$MySQLpass = '__SQLPASS__';
-$MySQLdatabase = '__SQLDBSE__';
+$MySQLhost = 'localhost';
+$MySQLuser = '1031_programming';
+$MySQLpass = '0p;/9ol.8ik,';
+$MySQLdatabase = '1031_programming';
 
 # Instructor Name
-$InstName = '__INSTRU__';
+$InstName = '林宗男';
 
 # TA informations, should be separated by ', '
-$TAnames   = '__TANAMES__';
-$TAemails  = '__TAMAILS__';
+$TAnames   = 'TA2 Two, TA1 One';
+$TAemails  = 'ta2@mail.com, ta1@mail.com';
+
+# TODO: add this into install.pl
+$testPathBase = '/home/1031_programming/problems/upload';
+$webRoot = '/home/1031_programming/public_html';
+$probDescBaseUrl = 'docs';
+$probDescPath = "$webRoot/$probDescBaseUrl"; # path to problem descriptions
+$restartScript = '/home/1031_programming/judge/restart.sh';
 ?>
 
 <?php
