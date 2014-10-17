@@ -77,27 +77,28 @@ $JudgePeriod  = 1; #integer, in second
 );
 
 %err_msg = (
-        ERR_CREATE   => '無法開啟程式檔。(系統錯誤，請戳助教)<br>',
-        ERR_CHECK    => '你的程式碼不符合題目的要求喔！(也許用到了什麼不該用的東西？)<br>',
-        WRN_COMPILE  => '以下是編譯器 (compiler) 對你的程式碼所發出的抱怨：<br>'.
-                         '<pre style=background-color:#ccc;margin:10px;padding:15px>%s</pre>',
-        ERR_COMPILE  => '編譯 (compile) 發生錯誤。你程式碼的語法有錯，或是用到還沒宣告的東西。<br>'.
-                        '批改娘愛的叮嚀：如果你的程式碼編譯 (compile) 時發生錯誤，就沒辦法產生執行檔，是不能執行並測試的喔！啾咪 ^_<<br>',
-        ERR_SAFEFUNC => '使用到不允許的函數或變數：<br>'.
-                        '<pre style=background-color:#ccc;margin:10px;padding:15px>%s</pre>'.
-                        '批改娘愛的叮嚀：你用到了沒有被允許使用的函數或變數 (或是根本不存在的函數或變數)，執行下去可能會讓批改娘受傷，所以先中止你的程式了。'.
-                        '如果有什麼疑慮，請跟助教聯絡喔！<br>',
-        ERR_LINK     => '連結 (link) 發生錯誤。可能你用到了沒有定義好的函數或變數。<br>'.
-                        '以下是連結器 (linker) 所發出的抱怨：<br>'.
-                        '<pre style=background-color:#ccc;margin:10px;padding:15px>%s</pre>'.
-                        '批改娘愛的叮嚀：如果你的程式連結 (link) 時發生錯誤，就沒辦法產生執行檔，是不能執行並測試的喔！啾咪 ^_<<br>',
-        ERR_TIMER    => '執行量測程式出錯：%s (請聯絡助教)<br>',
-        ERR_NOEXEC   => '無法執行程式。原因：%s (系統錯誤，請戳助教)<br>',
-        ERR_EXEC     => '你的程式當掉了！>"< 原因：%s<br>',
-        ERR_EXEC_PRE => '你的程式當掉了！>"< 原因：<br>'.
-                         '<pre style=background-color:#ccc;margin:10px;padding:15px>%s</pre>',
-        ERR_EXIT     => '批改娘愛的叮嚀：你的結束碼不是 0，這樣就算答案對也不算對喔！<br>', # unused
-        ERR_RED_CARD => '你已經拿到紅牌了喔，批改娘不想幫你改啦=3=<br>',
+        ERR_CREATE     => '無法開啟程式檔。(系統錯誤，請戳助教)<br>',
+        ERR_CHECK      => '你的程式碼不符合題目的要求喔！(也許用到了什麼不該用的東西？)<br>',
+        WRN_COMPILE    => '以下是編譯器 (compiler) 對你的程式碼所發出的抱怨：<br>'.
+                           '<pre style=background-color:#ccc;margin:10px;padding:15px>%s</pre>',
+        ERR_COMPILE    => '編譯 (compile) 發生錯誤。你程式碼的語法有錯，或是用到還沒宣告的東西。<br>'.
+                          '批改娘愛的叮嚀：如果你的程式碼編譯 (compile) 時發生錯誤，就沒辦法產生執行檔，是不能執行並測試的喔！啾咪 ^_<<br>',
+        ERR_SAFEFUNC   => '使用到不允許的函數或變數：<br>'.
+                          '<pre style=background-color:#ccc;margin:10px;padding:15px>%s</pre>'.
+                          '批改娘愛的叮嚀：你用到了沒有被允許使用的函數或變數 (或是根本不存在的函數或變數)，執行下去可能會讓批改娘受傷，所以先中止你的程式了。'.
+                          '如果有什麼疑慮，請跟助教聯絡喔！<br>',
+        ERR_LINK       => '連結 (link) 發生錯誤。可能你用到了沒有定義好的函數或變數。<br>'.
+                          '以下是連結器 (linker) 所發出的抱怨：<br>'.
+                          '<pre style=background-color:#ccc;margin:10px;padding:15px>%s</pre>'.
+                          '批改娘愛的叮嚀：如果你的程式連結 (link) 時發生錯誤，就沒辦法產生執行檔，是不能執行並測試的喔！啾咪 ^_<<br>',
+        ERR_TIMER      => '執行量測程式出錯：%s (請聯絡助教)<br>',
+        ERR_TIME_LIMIT => '執行時間超出限制：%s秒<br>',
+        ERR_NOEXEC     => '無法執行程式。原因：%s (系統錯誤，請戳助教)<br>',
+        ERR_EXEC       => '你的程式當掉了！>"< 原因：%s<br>',
+        ERR_EXEC_PRE   => '你的程式當掉了！>"< 原因：<br>'.
+                           '<pre style=background-color:#ccc;margin:10px;padding:15px>%s</pre>',
+        ERR_EXIT       => '批改娘愛的叮嚀：你的結束碼不是 0，這樣就算答案對也不算對喔！<br>', # unused
+        ERR_RED_CARD   => '你已經拿到紅牌了喔，批改娘不想幫你改啦=3=<br>',
 );
 
 ####
