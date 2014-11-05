@@ -12,34 +12,41 @@ if(!mysql_select_db($MySQLdatabase))
     exit("Connection to database failed.");
 
 $userid = $_SESSION["SU"] ? $_REQUEST["u"] : $_SESSION["ID"];
-if(!preg_match('/^\w*$/', $userid))
-    exit("Invalid username.");
 $volume = $_REQUEST["v"];
-if(!preg_match('/^\w+$/', $volume))
-    exit("Invalid volume name.");
 $number = $_REQUEST["n"];
+$maxOnly = $_REQUEST["m"];
 if(!preg_match('/^\d+$/', $number)){
     if(!$_SESSION['SU'])
         exit("Invalid problem number.");
     else
         unset($number);
 }
+
+if (!$_SESSION['SU']) {
+    if(!preg_match('/^\w*$/', $userid))
+        exit("Invalid username.");
+    if(!preg_match('/^\w+$/', $volume))
+        exit("Invalid volume name.");
+    checkVolume($volume);
+}
 ?>
 <?php
-$queryv = "SELECT * from volumes where name = '$volume'";
-$queryp = "SELECT * from problems where volume = '$volume'";
-if(isset($number))
-    $queryp.= " and number = $number";
-if(!$_SESSION['SU']){
-    $queryv .= " and available = 1";
-    $queryp .= " and available = 1";
+function checkVolume($volume) {
+    $queryv = "SELECT * from volumes where name = '$volume'";
+    $queryp = "SELECT * from problems where volume = '$volume'";
+    if(isset($number))
+        $queryp.= " and number = $number";
+    if(!$_SESSION['SU']){
+        $queryv .= " and available = 1";
+        $queryp .= " and available = 1";
+    }
+    $result = mysql_query($queryv);
+    if(mysql_num_rows($result) == 0)
+        exit('Volume not available/exist');
+    $result = mysql_query($queryp);
+    if(mysql_num_rows($result) == 0)
+        exit("Problem number $number not available/exist");
 }
-$result = mysql_query($queryv);
-if(mysql_num_rows($result) == 0)
-    exit('Volume not available/exist');
-$result = mysql_query($queryp);
-if(mysql_num_rows($result) == 0)
-    exit("Problem number $number not available/exist");
 ?>
 <html>
 <head>
@@ -75,9 +82,32 @@ include ("announce.php");
 if($_SESSION['SU']){
 ?>
 <form method='GET' action='list.php'>
-    <input type='hidden' name='v' value='<?php echo $volume; ?>'>
     <input type='hidden' name='n' value='<?php echo $number; ?>'>
-    List for user: <input type='text' name='u' size='16' maxlength='16'>
+    <label for='user'>User:</label>
+    <input id='user' type='text' name='u' size='16' maxlength='16' value='<?php echo $userid;?>'>
+<?php
+    if ($maxOnly)
+        echo "<input type='checkbox' name='m' value='1' checked='checked'>Max only";
+    else
+        echo "<input type='checkbox' name='m' value='1'>Max only";
+?>
+    <br>
+    <label for='volume'>Volume:</label>
+    <select id='volume' name='v'>
+<?php
+    $q = 'SELECT name, title FROM volumes';
+    $result = mysql_query($q);
+    for($i = 0; $i < mysql_num_rows($result); $i++){
+        list($name, $title) = mysql_fetch_row($result);
+
+        if ($name == $volume)
+            echo "<option value='$name' selected='selected'>$title</option>";
+        else
+            echo "<option value='$name'>$title</option>";
+    }
+?>
+    </select>
+    <br>
     <input type='submit' value='Submit'>
 </form>
 <?php
@@ -100,7 +130,16 @@ if($_SESSION['SU']){
 ?>
 	    <td>Problem Number</td>
 	    <td>Trial Number</td>
+<?php   if ($maxOnly) {
+?>
+        <td>Highest Score</td>
+<?php
+        } else {
+?>
 	    <td>Score</td>
+<?php
+        }
+?>
 	    <td>Received Time</td>
             <td>Log File</td> 
             <td>Program Listing</td>
@@ -118,6 +157,10 @@ if($_SESSION['SU']){
 #$wait_count = mysql_result($result, 0);
 
 $query = "SELECT user, number, trial, time, score, valid, comment FROM $volume ".(isset($number)?"WHERE number = $number":"")." ORDER BY time DESC, user";
+if ($maxOnly) {
+    $query = "SELECT user, number, trial, time, MAX(score), valid, comment FROM $volume WHERE user = '$userid' ".(isset($number)?"AND number = $number":"")." GROUP BY number ORDER BY number ASC";
+}
+    // $query = "SELECT user, number, trial, time, score, valid, comment FROM $volume ".(isset($number)?"WHERE number = $number":"")." ORDER BY time DESC, user INNER JOIN (SELECT user, number, MAX(score) AS maxScore FROM $volume GROUP BY number) ON score = maxScore";
 $result = mysql_query($query);
 
 for($i = 0; $i < mysql_num_rows($result); $i++){
@@ -221,14 +264,19 @@ echo"    </table>";
 ?>
 </td>
 </table>
+
+<?php
+if ($volume && $number) {
+?>
+<a href="submission.php?<?php echo "v=$volume&n=$number"; ?>"><h2 style="display: inline-block;"><strong>Submit Again</strong></h2></a>
+<?php
+}
+?>
 </center>
 <br>
 <?php
 print "Current time is " . date("Y-m-d H:i:s");  
 ?>
-<hr>
-<h2><strong>Submit Program</h2>
-<a href="submission.php?<?php echo "v=$volume&n=$number"; ?>">Press here</a>
 <hr>
 <?php include("footnote.php"); ?>
 </div>
