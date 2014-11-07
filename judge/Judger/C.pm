@@ -151,8 +151,14 @@ sub exec_msg {
             if ($ret_val == 127);
         die (sprintf $err_msg_ref->{ERR_NOEXEC}."\n", "command could not be executed")
             if ($ret_val == 126);
+        die (sprintf $err_msg_ref->{ERR_EXEC}."\n", "terminate called after throwing an instance of 'std::bad_alloc'")
+            if ($ret_val == 134);
         die (sprintf $err_msg_ref->{ERR_EXEC}."\n", "Bus error (core dumped)")
             if ($ret_val == 135);
+        die (sprintf $err_msg_ref->{ERR_TIME_LIMIT}."\n", $TimeLimit)
+            if ($ret_val == 137);
+        die (sprintf $err_msg_ref->{ERR_EXEC}."\n", "Stack smashing detected (invalid memory access)")
+            if ($ret_val == 139);
         die (sprintf $err_msg_ref->{ERR_TIMER}."\n", "timer program returns $ret_val")
             if ($ret_val > 0);
 
