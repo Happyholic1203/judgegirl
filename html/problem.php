@@ -14,6 +14,15 @@ if($_SESSION['SU'] && $_REQUEST['action'] != NULL){
     $volume = $_REQUEST["v"];
     if(!preg_match('/^\w+$/', $volume))
         exit("Invalid volume name.");
+    if($_REQUEST['action'] == 'disv') {
+        mysql_query("UPDATE volumes SET available = 0 WHERE name = '$volume'");
+	    header("Location: problem.php");
+    }
+    else if ($_REQUEST['action'] == 'enav') {
+        mysql_query("UPDATE volumes SET available = 1 WHERE name = '$volume'");
+	    header("Location: problem.php");
+    }
+
     $number = $_REQUEST["n"];
     if(!preg_match('/^\d+$/', $number))
         exit("Invalid problem number.");
@@ -63,7 +72,15 @@ $vol_menu = "";
 for($j = 0; $j < mysql_num_rows($result_vol); $j++){
     list($volume, $vtitle, $vavailable) = mysql_fetch_row($result_vol);
 ?>
-<h3><?php echo "<a name='$volume'>$vtitle</a>"; $vol_menu .= "<a href='#$volume'>$vtitle</a><br/>"; ?></h3>
+<h3>
+<?php echo "<a name='$volume'>$vtitle</a>"; $vol_menu .= "<a href='#$volume'>$vtitle</a><br/>"; ?>
+<?php if($_SESSION['SU']) {
+    if($vavailable)
+        echo "&nbsp;<span><a href='?v=$volume&action=disv'>off</a></span>";
+    else
+        echo "&nbsp;<span><a href='?v=$volume&action=enav'>on</a></span>";
+}?>
+</h3>
 <table border="2px" cellspacing="0px" cellpadding="2px" width="700"
 <?php if($vavailable == 0){
     echo "bordercolor=\"#D0D0D0\"";
