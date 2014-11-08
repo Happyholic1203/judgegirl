@@ -1,0 +1,45 @@
+#!/bin/bash
+
+testpath_base=/home/1031_programming/problems/upload
+testpath=$testpath_base/$1
+config=./config.pl
+webserver=www-data
+
+function usage {
+    echo 'Usage: sudo ./addconfig <testpath>'
+    echo 'Ex: `./addconfig ~/problems/upload/sample` will copy `./config.pl` into every problems in the testpath'
+}
+
+function chkInput {
+    if [ $# -ne 1 ]; then
+        usage
+        exit -1
+    fi
+}
+
+function chkDir {
+    if [ ! -d $1 ]; then
+        echo "**Error: $1 not found"
+        exit -1
+    fi
+}
+
+function chkFile {
+    if [ ! -e $1 ]; then
+        echo "**Error: $1 not found"
+        exit -1
+    fi
+}
+
+# main
+chkInput $@
+chkDir $testpath
+chkFile $config
+
+for tp in $testpath/*; do
+    if [ -d $tp ]; then
+        echo "Copying $config into $tp ..."
+        cp $config $tp
+        chown $webserver:$webserver $tp/$(basename $config)
+    fi
+done
