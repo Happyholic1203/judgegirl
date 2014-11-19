@@ -6,11 +6,6 @@ session_start();
 if(!$_SESSION["SU"])
     exit("Permission denied.");
 
-// if(!mysql_connect($MySQLhost, $MySQLuser, $MySQLpass))
-//     exit("Connection to database server failed.");
-// if (!mysql_select_db($MySQLdatabase))
-//     exit("Connection to database failed.");
-
 if ($_FILES['file']['error'] > 0) {
     echo 'Error code: '. $_FILES['file']['error']. '<br/>';
 }
@@ -25,31 +20,6 @@ else {
     $adder->extractVolume();
     $adder->addVolume();
     $adder->close();
-
-/*
-    $name = $_FILES['file']['name'];
-    $tmp_name = $_FILES['file']['tmp_name'];
-    $upload_dir = 'upload';
-    $target = "$upload_dir/$name";
-    if (!is_writable($upload_dir)) {
-        exit("`$target` is not writable");
-    }
-    move_uploaded_file($tmp_name, $target);
-    echo 'Upload completed<br/>';
-
-    $zip = new ZipArchive;
-    $res = $zip->open($target);
-    if ($res === TRUE) {
-        $zip->extractTo("$upload_dir/tmp");
-        $zip->close();
-        echo "$name extracted<br/>";
-        unlink($target);
-        echo "$name deleted";
-    }
-    else {
-        exit("Invalid zip file: $name");
-    }
-    */
 }
 
 class VolumeAdder {
@@ -64,7 +34,6 @@ class VolumeAdder {
 
     public function __construct($file) {
         $this->file = $file;
-        // $this->pdo = new PDO("mysql:host=
     }
 
     public function connectDB($host, $dbName, $user, $passwd) {
@@ -180,10 +149,8 @@ class VolumeAdder {
         if ($q->fetchColumn() > 0)
             echo "There is already an existing volume named `$name`<br/>";
         else {
-            $numVolumes = $this->pdo->query('SELECT COUNT(*) FROM volumes')->fetchColumn();
-            $q = $this->pdo->prepare("INSERT INTO volumes (number, type, name, title, available) VALUES (?, ?, ?, ?, ?)");
+            $q = $this->pdo->prepare("INSERT INTO volumes (type, name, title, available) VALUES (?, ?, ?, ?)");
             $q->execute(array(
-                $numVolumes + 1,
                 $type,
                 $name,
                 $title,
@@ -201,7 +168,7 @@ class VolumeAdder {
             echo "Table `$name` eixsts<br/>";
         }
         else {
-            $q = $this->pdo->prepare("CREATE TABLE $name (
+            $q = $this->pdo->prepare("CREATE TABLE IF NOT EXISTS $name (
                 user CHAR(16),
                 program blob,
                 number INTEGER UNSIGNED DEFAULT 0,

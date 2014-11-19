@@ -181,9 +181,9 @@ sub create_problemset {
         CREATE TABLE $_(
             user char(16),
             program blob,
-            number tinyint unsigned DEFAULT 0,
+            number integer unsigned DEFAULT 0,
             time datetime,
-            trial tinyint unsigned AUTO_INCREMENT PRIMARY KEY,
+            trial integer unsigned AUTO_INCREMENT PRIMARY KEY,
             score double,
             exec_time double,
             exec_space double,
