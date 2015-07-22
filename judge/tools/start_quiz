@@ -1,15 +1,39 @@
 #!/bin/bash
 
-echo "$0: Started at $(date)";
-# uncomment out the following lines before execution
-volume=2011final
-chmod go+x $HOME/public_html/$volume
-chmod go+r $HOME/public_html/$volume/*
-cat <<EOF | sed "s/__VOLUME__/$volume/" | ./jsql
+set -e
 
-update volumes set available = 0 ; 
-update volumes set available = 1 where name = '__VOLUME__' ; 
+usage() {
+	echo "Usage: $0 <volume>"
+}
 
-update problems set available = 1 where volume = '__VOLUME__'; 
+if [ -z $1 ]; then
+	usage
+	exit 0
+fi
 
+volume=$1
+
+remember_available_volumes() {
+cat <<EOF | ./jsql | tail -n +2 > $1
+SELECT name FROM volumes WHERE available=1;
 EOF
+}
+
+enable_only() {
+cat <<EOF | ./jsql
+UPDATE volumes SET available = 0;
+UPDATE volumes SET available = 1 WHERE name = '$1';
+UPDATE problems SET available = 1 WHERE volume = '$1';
+EOF
+}
+
+rm -f .turned_off_volumes
+remember_available_volumes .turned_off_volumes
+
+echo "> Enabling only $volume"
+enable_only $volume
+
+rm -f .exam_volume
+echo $volume > .exam_volume
+
+echo "> Exam started at $(date)"

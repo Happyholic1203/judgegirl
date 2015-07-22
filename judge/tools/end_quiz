@@ -1,13 +1,37 @@
 #!/bin/bash
 
+set -e
+
+ex=echo
+
 echo "$0: Started at $(date)";
 
-#select name from volumes where name not in (
+restore_volume() {
 cat <<EOF | ./jsql
-update volumes set available = 1 where name not in (
-		'test',
-		'2009hw');
+UPDATE volumes SET available = 1 WHERE name = '$1';
 EOF
+}
 
-#sed -i 's/\(\$QuizEnv\s*=\s*\)[0-9]\+/\10/' $HOME/public_html/judgegirl/config.php
-sed -i 's/\(\$ContestEnv\s*=\s*\)[0-9]\+/\10/' $HOME/public_html/judgegirl/config.php
+close_exam_volume() {
+exam_volume=`cat $1 || echo ''`
+cat <<EOF | ./jsql
+UPDATE volumes SET available = 0 WHERE name = '$exam_volume';
+EOF
+}
+
+restore_turned_off_volumes() {
+	if [ -f $1 ]; then
+		for x in `cat $1`; do
+			restore_volume $x
+		done
+	fi
+	rm -f $1
+}
+
+echo "> Restoring turned off volumes..."
+restore_turned_off_volumes .turned_off_volumes
+echo "> Closing exam volume..."
+close_exam_volume .exam_volume
+echo "> Done"
+
+# sed -i 's/\(\$ContestEnv\s*=\s*\)[0-9]\+/\10/' $HOME/public_html/config.php
